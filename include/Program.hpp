@@ -562,6 +562,7 @@ namespace OplInterpreter {
         Value* visit_while_node(OplType::AST*);
         Value* visit_for_node(OplType::AST*);
         Value* visit_type_cast_node(OplType::AST*);
+		Value* visit_not_node(OplType::AST*);
         Value* visit_digit_node(OplType::AST*);
         Value* visit_string_node(OplType::AST*);
         Value* visit_get_value(OplType::AST*);
@@ -573,6 +574,10 @@ namespace OplInterpreter {
         Value* evalute_member_access_expr(OplType::AST*);
         Value* visit_char_node(OplType::AST*);
     };
+	
+	Value* Program::visit_not_node(OplType::AST* a) {
+		return visit_bin_op_node(a)->__not__();
+	}
 
     void Program::crate(std::string s) {
         context = new Context(s, context);
@@ -615,6 +620,7 @@ namespace OplInterpreter {
         if (type == OplType::AST_FUNC_CALL) return visit_func_call(a);
         if (type == OplType::AST_GET_VALUE) return visit_get_value(a);
         if (type == OplType::AST_MEM_MALLOC) return visit_new_node(a);
+		if (type == OplType::AST_NOT) return visit_not_node(a);
         if (type == OplType::AST_VAR_DEF) return visit_var_define_node(a);
         if (type == OplType::AST_LAMBDA_CALL) return visit_lambda_call(a);
         if (type == OplType::AST_LAMBDA) return visit_lambda_node(a);
@@ -695,12 +701,12 @@ namespace OplInterpreter {
         auto body = a->children[1];
         int pc = 0;
         while (pc < body->children.size()) {
-            auto rtr = (RTResult*) visit_atom(a->children[pc]);
-            if (rtr->sh_break) break;
-            else if (rtr->sh_continue) pc = 0;
-            else if (rtr->sh_return) {
-                rtr->_return();
-                return rtr;
+            auto rtr_ = (RTResult*) visit_atom(a->children[pc]);
+            if (rtr_->sh_break) break;
+            else if (rtr_->sh_continue) pc = 0;
+            else if (rtr_->sh_return) {
+				rtr_->_return();
+                return rtr_;
             }
             else ++pc;
         }
@@ -710,13 +716,21 @@ namespace OplInterpreter {
     Value *Program::visit_for_node(OplType::AST *a) {
         auto rtr = new RTResult();
         auto init = a->children[0];
-        auto is_loop  = (Bool*) visit_atom(a->children[1]);
         auto chang = a->children[2];
         auto body = a->children[3]->children;
         visit_atom(init);
+		auto is_loop  = (Bool*) visit_atom(a->children[1]);
         int pc = 0;
         while (pc < body.size() && is_loop->b) {
-
+			auto rr = (RTResult*) visit_atom(body[pc]);
+			if (rr->sh_break) break;
+			if (rr->sh_continue) pc = 0;
+			else if (rr->sh_return) {
+				rr->_return();
+				return rr;
+			}
+			visit_atom(chang);
+			is_loop = (Bool*) visit_atom(a->children[1]);
         }
         return rtr;
     }
