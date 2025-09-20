@@ -1,0 +1,54 @@
+class ListNode {
+    public let data: int;
+    public let next: int;
+    constructor(data: int) this {
+        this.data = data;
+        this.next = -1;
+    }
+}
+
+class List {
+    public let list: ListNode[];
+    private let size: int;
+    private let head: int;
+    private let tail: int;
+
+	private function append(data: int) void {
+        if (this.size >= len(this.list)) return;
+        let newNode = new ListNode(data);
+        let index = this.size;
+        this.list[index] = newNode;
+        if (this.head == -1) {
+            this.head = index;
+            this.tail = index;
+        } else {
+            this.list[this.tail].next = index;
+            this.tail = index;
+        }
+        this.size++;
+    }
+
+    constructor(size: int) this {
+        this.list = new ListNode[size];
+        this.size = 0;
+        this.head = -1;
+        this.tail = -1;
+        this.append(1);
+    }
+}
+
+class A {
+	public let g: int;
+	constructor() this {}
+}
+
+class B {
+	public let f: A;
+	constructor() this {}
+}
+
+function main() void {
+	let a = new List();
+	let g = lambda() void {};
+	g();
+}

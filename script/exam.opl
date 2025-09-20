@@ -1,0 +1,20 @@
+class FibonacciQuotaNumber {
+	private let numberQuota: int[];
+	public let size: int;
+	constructor(size: int) this {
+		this.size = size;
+		this.numberQuota = new int[size];
+		this.numberQuota[0] = 1;
+		this.numberQuota[1] = 1;
+	}
+	public function build() void {
+		for (let i = 0; i < this.size; ++i)
+			this.numberQuota[i] = this.numberQuota[i-1] + this.numberQuota[i-2];
+	}
+}
+
+function main() void {
+	let c = -(1+1*2);
+	let a = new FibonacciQuotaNumber(1024);
+	a.build();
+}

@@ -1,0 +1,15 @@
+function callBackTest(a: lambda<int, int>: int) int {
+	return a(1,1);
+}
+
+class A {
+	public let add: lambda<int, int>: string;
+}
+
+class Test {
+	public let x: lambda<int>: A;
+}
+
+function main() void {
+	let k = -(9*9 + 90);
+}
